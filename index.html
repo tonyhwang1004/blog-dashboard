@@ -2,677 +2,75 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 Blog Dashboard - AdSense Tracker</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Blog Dashboard + AdSense Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #06060c;
-  --surface: #0e0e18;
-  --surface2: #161624;
-  --surface3: #1e1e30;
-  --border: #252540;
-  --text: #e8e8f4;
-  --text2: #7878a0;
-  --text3: #4a4a6a;
-  --accent: #7c6af6;
-  --accent2: #a594fd;
-  --green: #00e676;
-  --green2: #69f0ae;
-  --orange: #ffab40;
-  --red: #ff5252;
-  --blue: #448aff;
-  --cyan: #18ffff;
-  --yellow: #ffd740;
-  --pink: #ff4081;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-body::before {
-  content:''; position:fixed; top:-50%; left:-50%; width:200%; height:200%;
-  background: radial-gradient(ellipse at 25% 50%, rgba(124,106,246,0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 75% 25%, rgba(0,230,118,0.04) 0%, transparent 50%),
-              radial-gradient(ellipse at 50% 80%, rgba(68,138,255,0.04) 0%, transparent 50%);
-  animation: bgDrift 25s ease-in-out infinite; z-index:-1;
-}
-@keyframes bgDrift {
-  0%,100%{transform:translate(0,0)} 50%{transform:translate(1%,-1%)}
-}
-
-/* Header */
-.header { padding:28px 36px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
-.header h1 { font-size:26px; font-weight:900; background:linear-gradient(135deg,var(--accent2),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.header-sub { font-size:12px; color:var(--text2); font-weight:300; margin-top:2px; }
-.header-right { display:flex; gap:10px; align-items:center; }
-.refresh-btn {
-  background:var(--accent); color:#fff; border:none; padding:9px 18px; border-radius:10px;
-  font-family:'Outfit'; font-size:13px; font-weight:600; cursor:pointer; transition:all .3s;
-  display:flex; align-items:center; gap:6px;
-}
-.refresh-btn:hover { background:var(--accent2); transform:translateY(-2px); box-shadow:0 6px 20px rgba(124,106,246,.3); }
-.refresh-btn.loading .spin { animation:spin 1s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.last-update { font-size:11px; color:var(--text3); font-family:'JetBrains Mono'; }
-
-/* ============================================ */
-/* AdSense Progress Section */
-/* ============================================ */
-.adsense-section { padding:0 36px 24px; }
-.adsense-title {
-  font-size:20px; font-weight:800; margin-bottom:16px;
-  display:flex; align-items:center; gap:10px;
-}
-.adsense-title .badge {
-  font-size:11px; background:rgba(255,171,64,.15); color:var(--orange);
-  padding:4px 12px; border-radius:6px; font-weight:600;
-}
-
-/* Master progress */
-.master-progress {
-  background:var(--surface); border:1px solid var(--border); border-radius:16px;
-  padding:24px; margin-bottom:20px;
-}
-.master-progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-.master-progress-title { font-size:16px; font-weight:700; }
-.master-progress-pct { font-size:28px; font-weight:900; color:var(--accent2); font-family:'JetBrains Mono'; }
-.progress-track {
-  width:100%; height:14px; background:var(--surface3); border-radius:10px; overflow:hidden; position:relative;
-}
-.progress-fill {
-  height:100%; border-radius:10px; transition:width 1.5s cubic-bezier(.16,1,.3,1);
-  background:linear-gradient(90deg,var(--accent),var(--cyan));
-  position:relative;
-}
-.progress-fill::after {
-  content:''; position:absolute; right:0; top:0; bottom:0; width:30px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));
-  animation:shimmer 2s ease-in-out infinite;
-}
-@keyframes shimmer { 0%,100%{opacity:.3} 50%{opacity:.8} }
-
-/* Steps timeline */
-.steps-timeline { display:flex; gap:0; margin-top:24px; position:relative; }
-.steps-timeline::before {
-  content:''; position:absolute; top:18px; left:24px; right:24px; height:3px;
-  background:var(--surface3); border-radius:3px; z-index:0;
-}
-.step {
-  flex:1; text-align:center; position:relative; z-index:1;
-}
-.step-dot {
-  width:38px; height:38px; border-radius:50%; margin:0 auto 10px;
-  display:flex; align-items:center; justify-content:center; font-size:16px;
-  border:3px solid var(--border); background:var(--surface); transition:all .4s;
-}
-.step.done .step-dot { border-color:var(--green); background:rgba(0,230,118,.1); }
-.step.active .step-dot { border-color:var(--orange); background:rgba(255,171,64,.1); animation:stepPulse 2s ease-in-out infinite; }
-.step.locked .step-dot { border-color:var(--border); opacity:.5; }
-@keyframes stepPulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,171,64,.3)} 50%{box-shadow:0 0 0 8px rgba(255,171,64,0)} }
-
-.step-label { font-size:11px; color:var(--text2); font-weight:500; line-height:1.3; }
-.step-sublabel { font-size:10px; color:var(--text3); font-family:'JetBrains Mono'; margin-top:3px; }
-.step.done .step-label { color:var(--green2); }
-.step.active .step-label { color:var(--orange); font-weight:700; }
-
-/* Blog AdSense cards grid */
-.adsense-grid {
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px;
-}
-.adsense-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:14px;
-  padding:20px; transition:all .4s cubic-bezier(.16,1,.3,1);
-  animation:cardUp .5s ease-out backwards;
-}
-.adsense-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 10px 30px rgba(124,106,246,.12); }
-@keyframes cardUp { from{opacity:0;transform:translateY(16px)} }
-
-.ac-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
-.ac-name { font-size:15px; font-weight:700; }
-.ac-platform {
-  font-size:10px; padding:3px 8px; border-radius:5px; font-weight:600;
-  background:rgba(124,106,246,.12); color:var(--accent2);
-}
-.ac-platform.tistory { background:rgba(255,64,129,.12); color:var(--pink); }
-
-.ac-url { font-size:11px; color:var(--text3); font-family:'JetBrains Mono'; margin-bottom:12px; display:block; text-decoration:none; }
-.ac-url:hover { color:var(--accent2); }
-
-/* Mini progress */
-.ac-progress { margin-bottom:12px; }
-.ac-progress-header { display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; }
-.ac-progress-label { color:var(--text2); }
-.ac-progress-val { color:var(--accent2); font-weight:700; font-family:'JetBrains Mono'; }
-.ac-progress-track { width:100%; height:8px; background:var(--surface3); border-radius:6px; overflow:hidden; }
-.ac-progress-fill { height:100%; border-radius:6px; transition:width 1.2s cubic-bezier(.16,1,.3,1); }
-.fill-green { background:linear-gradient(90deg,#00c853,#69f0ae); }
-.fill-orange { background:linear-gradient(90deg,#ff9100,#ffd740); }
-.fill-blue { background:linear-gradient(90deg,var(--accent),var(--cyan)); }
-.fill-red { background:linear-gradient(90deg,#ff1744,#ff8a80); }
-
-/* Status rows */
-.ac-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
-.ac-stat {
-  background:var(--surface2); border-radius:8px; padding:10px 12px; text-align:center;
-}
-.ac-stat-num { font-size:20px; font-weight:800; font-family:'JetBrains Mono'; display:block; line-height:1; }
-.ac-stat-label { font-size:10px; color:var(--text3); margin-top:4px; text-transform:uppercase; letter-spacing:.5px; }
-
-/* Phase badge */
-.phase-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:6px 14px; border-radius:8px; font-size:12px; font-weight:700; margin-bottom:10px;
-}
-.phase-accumulate { background:rgba(68,138,255,.12); color:var(--blue); }
-.phase-apply { background:rgba(255,171,64,.12); color:var(--orange); }
-.phase-review { background:rgba(124,106,246,.12); color:var(--accent2); }
-.phase-approved { background:rgba(0,230,118,.12); color:var(--green); }
-.phase-earning { background:rgba(255,215,64,.12); color:var(--yellow); }
-
-/* D-day */
-.dday-box {
-  background:var(--surface2); border-radius:10px; padding:12px; text-align:center; margin-top:10px;
-}
-.dday-num { font-size:24px; font-weight:900; font-family:'JetBrains Mono'; }
-.dday-label { font-size:11px; color:var(--text2); margin-top:2px; }
-.dday-green { color:var(--green); }
-.dday-orange { color:var(--orange); }
-.dday-blue { color:var(--blue); }
-.dday-accent { color:var(--accent2); }
-
-/* Posts section */
-.ac-posts-toggle {
-  font-size:12px; color:var(--accent2); cursor:pointer; text-align:center;
-  padding:8px; border-top:1px solid var(--border); margin-top:10px; transition:color .3s;
-}
-.ac-posts-toggle:hover { color:var(--cyan); }
-.ac-posts-list { max-height:0; overflow:hidden; transition:max-height .4s; }
-.ac-posts-list.open { max-height:400px; overflow-y:auto; }
-.ac-post-item {
-  display:flex; gap:8px; padding:8px 0; border-top:1px solid var(--border); align-items:center;
-}
-.ac-post-dot { width:6px; height:6px; border-radius:50%; background:var(--green); flex-shrink:0; }
-.ac-post-dot.old { background:var(--text3); }
-.ac-post-title {
-  font-size:12px; color:var(--text); text-decoration:none; flex:1;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.ac-post-title:hover { color:var(--accent2); }
-.ac-post-date { font-size:10px; color:var(--text3); font-family:'JetBrains Mono'; flex-shrink:0; }
-
-/* Filter */
-.filter-bar { padding:0 36px 16px; display:flex; gap:8px; flex-wrap:wrap; }
-.filter-tab {
-  background:var(--surface); border:1px solid var(--border); color:var(--text2);
-  padding:7px 16px; border-radius:18px; font-family:'Outfit'; font-size:12px;
-  cursor:pointer; transition:all .3s;
-}
-.filter-tab:hover { border-color:var(--accent); color:var(--text); }
-.filter-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-
-/* Loading */
-.loading-overlay {
-  position:fixed; top:0;left:0;right:0;bottom:0; background:var(--bg);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000;
-  transition:opacity .5s;
-}
-.loading-overlay.hide { opacity:0; pointer-events:none; }
-.loader { width:44px;height:44px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
-.loading-text { margin-top:16px; color:var(--text2); font-size:13px; }
-
-.toast {
-  position:fixed; bottom:28px; right:28px; background:var(--green); color:#000;
-  padding:12px 22px; border-radius:10px; font-weight:600; font-size:13px;
-  transform:translateY(80px); opacity:0; transition:all .4s cubic-bezier(.16,1,.3,1); z-index:999;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-
-/* Stats bar */
-.stats-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; padding:0 36px 20px; }
-.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; transition:all .3s; }
-.stat-card:hover { border-color:var(--accent); transform:translateY(-2px); }
-.stat-num { font-size:30px; font-weight:900; display:block; line-height:1; font-family:'JetBrains Mono'; }
-.stat-label { font-size:10px; color:var(--text2); margin-top:6px; text-transform:uppercase; letter-spacing:1px; }
-
-@media (max-width:768px) {
-  .header,.adsense-section,.filter-bar,.stats-bar { padding-left:14px; padding-right:14px; }
-  .adsense-grid { grid-template-columns:1fr; }
-  .stats-bar { grid-template-columns:repeat(2,1fr); }
-  .steps-timeline { flex-wrap:wrap; gap:4px; }
-  .step { flex:0 0 30%; }
-}
-</style>
-</head>
-<body>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loader"></div>
-  <div class="loading-text">블로그 데이터 수집 중...</div>
-</div>
+:root{--bg:#06060c;--surface:#0e0e18;--surface2:#161624;--surface3:#1e1e30;--border:#252540;--text:#e8e8f4;--text2:#7878a0;--text3:#4a4a6a;--accent:#7c6af6;--accent2:#a594fd;--green:#00e676;--green2:#69f0ae;--orange:#ffab40;--red:#ff5252;--blue:#448aff;--cyan:#18ffff;--yellow:#ffd740;--pink:#ff4081}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 25% 50%,rgba(124,106,246,.06) 0%,transparent 50%),radial-gradient(ellipse at 75% 25%,rgba(0,230,118,.04) 0%,transparent 50%);animation:bgD 25s ease-in-out infinite;z-index:-1}@keyframes bgD{0%,100%{transform:translate(0,0)}50%{transform:translate(1%,-1%)}}.header{padding:28px 36px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}.header h1{font-size:26px;font-weight:900;background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.header-sub{font-size:12px;color:var(--text2);margin-top:2px}.header-right{display:flex;gap:10px;align-items:center}.refresh-btn{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:10px;font-family:'Outfit';font-size:13px;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:6px}.refresh-btn:hover{background:var(--accent2);transform:translateY(-2px)}.refresh-btn.loading .spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.last-update{font-size:11px;color:var(--text3);font-family:'JetBrains Mono'}.adsense-section{padding:0 36px 24px}.adsense-title{font-size:20px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}.adsense-title .badge{font-size:11px;background:rgba(255,171,64,.15);color:var(--orange);padding:4px 12px;border-radius:6px;font-weight:600}.master-progress{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}.master-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.master-progress-title{font-size:16px;font-weight:700}.master-progress-pct{font-size:28px;font-weight:900;color:var(--accent2);font-family:'JetBrains Mono'}.progress-track{width:100%;height:14px;background:var(--surface3);border-radius:10px;overflow:hidden}.progress-fill{height:100%;border-radius:10px;transition:width 1.5s cubic-bezier(.16,1,.3,1);background:linear-gradient(90deg,var(--accent),var(--cyan))}.steps-timeline{display:flex;gap:0;margin-top:24px;position:relative}.steps-timeline::before{content:'';position:absolute;top:18px;left:24px;right:24px;height:3px;background:var(--surface3);border-radius:3px;z-index:0}.step{flex:1;text-align:center;position:relative;z-index:1}.step-dot{width:38px;height:38px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid var(--border);background:var(--surface);transition:all .4s}.step.done .step-dot{border-color:var(--green);background:rgba(0,230,118,.1)}.step.active .step-dot{border-color:var(--orange);background:rgba(255,171,64,.1);animation:sP 2s ease-in-out infinite}.step.locked .step-dot{border-color:var(--border);opacity:.5}@keyframes sP{0%,100%{box-shadow:0 0 0 0 rgba(255,171,64,.3)}50%{box-shadow:0 0 0 8px rgba(255,171,64,0)}}.step-label{font-size:11px;color:var(--text2);font-weight:500}.step-sublabel{font-size:10px;color:var(--text3);font-family:'JetBrains Mono';margin-top:3px}.step.done .step-label{color:var(--green2)}.step.active .step-label{color:var(--orange);font-weight:700}.adsense-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}.adsense-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .4s;animation:cU .5s ease-out backwards}.adsense-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 10px 30px rgba(124,106,246,.12)}@keyframes cU{from{opacity:0;transform:translateY(16px)}}.ac-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}.ac-name{font-size:15px;font-weight:700}.ac-platform{font-size:10px;padding:3px 8px;border-radius:5px;font-weight:600;background:rgba(124,106,246,.12);color:var(--accent2)}.ac-platform.tistory{background:rgba(255,64,129,.12);color:var(--pink)}.ac-url{font-size:11px;color:var(--text3);font-family:'JetBrains Mono';margin-bottom:12px;display:block;text-decoration:none}.ac-url:hover{color:var(--accent2)}.ac-progress{margin-bottom:12px}.ac-progress-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.ac-progress-label{color:var(--text2)}.ac-progress-val{color:var(--accent2);font-weight:700;font-family:'JetBrains Mono'}.ac-progress-track{width:100%;height:8px;background:var(--surface3);border-radius:6px;overflow:hidden}.ac-progress-fill{height:100%;border-radius:6px;transition:width 1.2s}.fill-green{background:linear-gradient(90deg,#00c853,#69f0ae)}.fill-orange{background:linear-gradient(90deg,#ff9100,#ffd740)}.fill-blue{background:linear-gradient(90deg,var(--accent),var(--cyan))}.ac-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.ac-stat{background:var(--surface2);border-radius:8px;padding:10px 12px;text-align:center}.ac-stat-num{font-size:20px;font-weight:800;font-family:'JetBrains Mono';display:block;line-height:1}.ac-stat-label{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}.phase-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;margin-bottom:10px}.phase-accumulate{background:rgba(68,138,255,.12);color:var(--blue)}.phase-apply{background:rgba(255,171,64,.12);color:var(--orange)}.phase-review{background:rgba(124,106,246,.12);color:var(--accent2)}.phase-approved{background:rgba(0,230,118,.12);color:var(--green)}.phase-earning{background:rgba(255,215,64,.12);color:var(--yellow)}.dday-box{background:var(--surface2);border-radius:10px;padding:12px;text-align:center;margin-top:10px}.dday-num{font-size:24px;font-weight:900;font-family:'JetBrains Mono'}.dday-label{font-size:11px;color:var(--text2);margin-top:2px}.dday-green{color:var(--green)}.dday-orange{color:var(--orange)}.dday-blue{color:var(--blue)}.ac-posts-toggle{font-size:12px;color:var(--accent2);cursor:pointer;text-align:center;padding:8px;border-top:1px solid var(--border);margin-top:10px}.ac-posts-toggle:hover{color:var(--cyan)}.ac-posts-list{max-height:0;overflow:hidden;transition:max-height .4s}.ac-posts-list.open{max-height:400px;overflow-y:auto}.ac-post-item{display:flex;gap:8px;padding:8px 0;border-top:1px solid var(--border);align-items:center}.ac-post-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}.ac-post-dot.old{background:var(--text3)}.ac-post-title{font-size:12px;color:var(--text);text-decoration:none;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ac-post-title:hover{color:var(--accent2)}.ac-post-date{font-size:10px;color:var(--text3);font-family:'JetBrains Mono';flex-shrink:0}.filter-bar{padding:0 0 16px;display:flex;gap:8px;flex-wrap:wrap}.filter-tab{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:7px 16px;border-radius:18px;font-family:'Outfit';font-size:12px;cursor:pointer;transition:all .3s}.filter-tab:hover{border-color:var(--accent);color:var(--text)}.filter-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:0 36px 20px}.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:all .3s}.stat-card:hover{border-color:var(--accent);transform:translateY(-2px)}.stat-num{font-size:30px;font-weight:900;display:block;line-height:1;font-family:'JetBrains Mono'}.stat-label{font-size:10px;color:var(--text2);margin-top:6px;text-transform:uppercase;letter-spacing:1px}.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity .5s}.loading-overlay.hide{opacity:0;pointer-events:none}.loader{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}.loading-text{margin-top:16px;color:var(--text2);font-size:13px}.toast{position:fixed;bottom:28px;right:28px;background:var(--green);color:#000;padding:12px 22px;border-radius:10px;font-weight:600;font-size:13px;transform:translateY(80px);opacity:0;transition:all .4s;z-index:999}.toast.show{transform:translateY(0);opacity:1}@media(max-width:768px){.header,.adsense-section,.stats-bar{padding-left:14px;padding-right:14px}.adsense-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}.steps-timeline{flex-wrap:wrap}.step{flex:0 0 30%}}
+</style></head><body>
+<div class="loading-overlay" id="lo"><div class="loader"></div><div class="loading-text">블로그 데이터 수집 중...</div></div>
 <div class="toast" id="toast"></div>
-
-<header class="header">
-  <div>
-    <h1>📊 Blog Dashboard + AdSense Tracker</h1>
-    <div class="header-sub">블로그스팟 17개 + 티스토리 10개 — 포스트 & 애드센스 승인 현황</div>
-  </div>
-  <div class="header-right">
-    <span class="last-update" id="lastUpdate">--</span>
-    <button class="refresh-btn" onclick="refreshAll()"><span class="spin">🔄</span> 새로고침</button>
-  </div>
-</header>
-
-<!-- Stats -->
-<div class="stats-bar">
-  <div class="stat-card"><span class="stat-num" style="color:var(--blue)" id="sTotalBlogs">0</span><div class="stat-label">전체 블로그</div></div>
-  <div class="stat-card"><span class="stat-num" style="color:var(--green)" id="sTotalPosts">0</span><div class="stat-label">전체 포스트</div></div>
-  <div class="stat-card"><span class="stat-num" style="color:var(--orange)" id="sTodayPosts">0</span><div class="stat-label">오늘 발행</div></div>
-  <div class="stat-card"><span class="stat-num" style="color:var(--accent2)" id="sApplyReady">0</span><div class="stat-label">신청 가능</div></div>
-  <div class="stat-card"><span class="stat-num" style="color:var(--yellow)" id="sApproved">0</span><div class="stat-label">승인 완료</div></div>
-</div>
-
-<!-- AdSense Master Progress -->
-<div class="adsense-section">
-  <div class="adsense-title">
-    💰 AdSense 승인 로드맵
-    <span class="badge" id="overallPhase">콘텐츠 축적 중</span>
-  </div>
-
-  <div class="master-progress">
-    <div class="master-progress-header">
-      <div class="master-progress-title">전체 진행률</div>
-      <div class="master-progress-pct" id="masterPct">0%</div>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="masterFill" style="width:0%"></div>
-    </div>
-
-    <!-- Steps -->
-    <div class="steps-timeline" id="stepsTimeline">
-      <div class="step active" data-step="1">
-        <div class="step-dot">📝</div>
-        <div class="step-label">콘텐츠 축적</div>
-        <div class="step-sublabel" id="stepSub1">0/30 포스트</div>
-      </div>
-      <div class="step locked" data-step="2">
-        <div class="step-dot">📋</div>
-        <div class="step-label">품질 점검</div>
-        <div class="step-sublabel">최소 30개</div>
-      </div>
-      <div class="step locked" data-step="3">
-        <div class="step-dot">📨</div>
-        <div class="step-label">AdSense 신청</div>
-        <div class="step-sublabel" id="stepSub3">D-??</div>
-      </div>
-      <div class="step locked" data-step="4">
-        <div class="step-dot">⏳</div>
-        <div class="step-label">심사 대기</div>
-        <div class="step-sublabel">1~4주</div>
-      </div>
-      <div class="step locked" data-step="5">
-        <div class="step-dot">✅</div>
-        <div class="step-label">승인 완료</div>
-        <div class="step-sublabel">광고 게재</div>
-      </div>
-      <div class="step locked" data-step="6">
-        <div class="step-dot">💰</div>
-        <div class="step-label">수익 발생</div>
-        <div class="step-sublabel">$100 달성</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Filter -->
-  <div class="filter-bar" style="padding:0 0 16px;">
-    <button class="filter-tab active" data-filter="all">전체</button>
-    <button class="filter-tab" data-filter="blogspot">블로그스팟</button>
-    <button class="filter-tab" data-filter="tistory">티스토리</button>
-    <button class="filter-tab" data-filter="ready">🟢 신청 가능</button>
-    <button class="filter-tab" data-filter="almost">🟡 거의 완료</button>
-    <button class="filter-tab" data-filter="building">🔵 축적 중</button>
-  </div>
-
-  <!-- Blog cards -->
-  <div class="adsense-grid" id="blogGrid"></div>
-</div>
-
+<header class="header"><div><h1>📊 Blog Dashboard + AdSense Tracker</h1><div class="header-sub">블로그스팟 17개 + 티스토리 10개 — 실시간 포스트 & 애드센스 승인 현황</div></div><div class="header-right"><span class="last-update" id="lastUp">--</span><button class="refresh-btn" onclick="refreshAll()"><span class="spin">🔄</span> 새로고침</button></div></header>
+<div class="stats-bar"><div class="stat-card"><span class="stat-num" style="color:var(--blue)" id="sB">0</span><div class="stat-label">전체 블로그</div></div><div class="stat-card"><span class="stat-num" style="color:var(--green)" id="sP">0</span><div class="stat-label">전체 포스트</div></div><div class="stat-card"><span class="stat-num" style="color:var(--orange)" id="sT">0</span><div class="stat-label">오늘 발행</div></div><div class="stat-card"><span class="stat-num" style="color:var(--accent2)" id="sR">0</span><div class="stat-label">신청 가능</div></div><div class="stat-card"><span class="stat-num" style="color:var(--yellow)" id="sA">0</span><div class="stat-label">승인 완료</div></div></div>
+<div class="adsense-section"><div class="adsense-title">💰 AdSense 승인 로드맵 <span class="badge" id="oP">콘텐츠 축적 중</span></div>
+<div class="master-progress"><div class="master-progress-header"><div class="master-progress-title">전체 진행률</div><div class="master-progress-pct" id="mP">0%</div></div><div class="progress-track"><div class="progress-fill" id="mF" style="width:0%"></div></div>
+<div class="steps-timeline"><div class="step active"><div class="step-dot">📝</div><div class="step-label">콘텐츠 축적</div><div class="step-sublabel" id="s1">0/30</div></div><div class="step locked"><div class="step-dot">📋</div><div class="step-label">품질 점검</div><div class="step-sublabel">최소 30개</div></div><div class="step locked"><div class="step-dot">📨</div><div class="step-label">AdSense 신청</div><div class="step-sublabel" id="s3">D-??</div></div><div class="step locked"><div class="step-dot">⏳</div><div class="step-label">심사 대기</div><div class="step-sublabel">1~4주</div></div><div class="step locked"><div class="step-dot">✅</div><div class="step-label">승인 완료</div><div class="step-sublabel">광고 게재</div></div><div class="step locked"><div class="step-dot">💰</div><div class="step-label">수익 발생</div><div class="step-sublabel">$100 달성</div></div></div></div>
+<div class="filter-bar"><button class="filter-tab active" data-filter="all">전체</button><button class="filter-tab" data-filter="blogspot">블로그스팟</button><button class="filter-tab" data-filter="tistory">티스토리</button><button class="filter-tab" data-filter="ready">🟢 신청 가능</button><button class="filter-tab" data-filter="almost">🟡 거의 완료</button><button class="filter-tab" data-filter="building">🔵 축적 중</button></div>
+<div class="adsense-grid" id="grid"></div></div>
 <script>
-// ============================================
-// 블로그 설정
-// ============================================
-const BLOGS = {
-  blogspot: [
-    {name:"공부법 연구소", url:"study-tips-korea", category:"학습법", color:"#7c6af6", startDate:"2026-02-28"},
-    {name:"수험생 건강노트", url:"student-health-kr", category:"건강", color:"#00b894", startDate:"2026-02-28"},
-    {name:"집중력 멘탈코치", url:"focus-mental-study", category:"멘탈", color:"#e17055", startDate:"2026-02-28"},
-    {name:"수험생 영양식단", url:"student-nutrition-kr", category:"영양", color:"#fdcb6e", startDate:"2026-02-28"},
-    {name:"시간관리 플래너", url:"time-planner-study", category:"시간관리", color:"#0984e3", startDate:"2026-02-28"},
-    {name:"수능전략 가이드", url:"suneung-strategy-kr", category:"수능전략", color:"#d63031", startDate:"2026-02-28"},
-    {name:"컨디션 관리법", url:"sleep-condition-study", category:"컨디션", color:"#00cec9", startDate:"2026-02-28"},
-    {name:"대입정보 나침반", url:"college-admission-kr", category:"입시", color:"#e84393", startDate:"2026-02-28"},
-    {name:"과목별 공부꿀팁", url:"subject-study-tips", category:"과목별", color:"#636e72", startDate:"2026-02-28"},
-    {name:"Easy Food Recipe", url:"easy-food-recipe", category:"요리", color:"#ff7675", startDate:"2025-10-01"},
-    {name:"Fitness Life Blog", url:"fitness-life-blog", category:"피트니스", color:"#55efc4", startDate:"2025-10-01"},
-    {name:"Health Tips Daily", url:"health-tips-daily", category:"건강팁", color:"#74b9ff", startDate:"2025-10-01"},
-    {name:"Home Decor Ideas", url:"home-decor-ideas", category:"인테리어", color:"#fab1a0", startDate:"2025-10-01"},
-    {name:"Smart Finance Guide", url:"smart-finance-guide", category:"재테크", color:"#ffeaa7", startDate:"2025-10-01"},
-    {name:"Tech Review Hub", url:"tech-review-hub", category:"IT리뷰", color:"#81ecec", startDate:"2025-10-01"},
-    {name:"Travel World Blog", url:"travel-world-blog", category:"여행", color:"#a29bfe", startDate:"2025-10-01"},
-    {name:"Gaming News Hub", url:"gaming-news-hub", category:"게임", color:"#fd79a8", startDate:"2025-10-01"},
-  ],
-  tistory: [
-    {name:"techtrendzworld", url:"techtrendzworld", category:"IT/기술", color:"#7c6af6", startDate:"2025-06-01"},
-    {name:"moneytips2025", url:"moneytips2025", category:"재테크", color:"#00b894", startDate:"2025-06-01"},
-    {name:"healthylife365day", url:"healthylife365day", category:"건강", color:"#e17055", startDate:"2025-06-01"},
-    {name:"tastyfoodguide", url:"tastyfoodguide", category:"요리", color:"#fdcb6e", startDate:"2025-06-01"},
-    {name:"traveldiaries", url:"traveldiaries", category:"여행", color:"#0984e3", startDate:"2025-06-01"},
-    {name:"journal34920", url:"journal34920", category:"일반", color:"#636e72", startDate:"2025-09-01"},
-    {name:"smartparents2025", url:"smartparents2025", category:"육아", color:"#e84393", startDate:"2025-09-01"},
-    {name:"myhomespace2025", url:"myhomespace2025", category:"부동산", color:"#00cec9", startDate:"2025-09-01"},
-    {name:"careerlife2025", url:"careerlife2025", category:"직장", color:"#d63031", startDate:"2025-09-01"},
-    {name:"shoppingbest2025", url:"shoppingbest2025", category:"쇼핑", color:"#fab1a0", startDate:"2025-09-01"},
-  ]
-};
-
-const ADSENSE_GOAL = 30; // 최소 포스트 수
-let allBlogData = [];
-let currentFilter = "all";
-
-// ============================================
-// AdSense 상태 계산
-// ============================================
-function calcAdSenseStatus(blog) {
-  const posts = blog.postCount || 0;
-  const pct = Math.min(100, Math.round((posts / ADSENSE_GOAL) * 100));
-  const remaining = Math.max(0, ADSENSE_GOAL - posts);
-
-  // 하루 평균 포스트 수 계산
-  const start = new Date(blog.startDate || Date.now());
-  const daysSinceStart = Math.max(1, Math.floor((Date.now() - start) / 86400000));
-  const avgPerDay = posts / daysSinceStart;
-  const estDaysToGoal = remaining > 0 && avgPerDay > 0 ? Math.ceil(remaining / avgPerDay) : 0;
-  const estApplyDate = new Date(Date.now() + estDaysToGoal * 86400000);
-
-  // 승인 예상 (신청 후 2주)
-  const estApprovalDate = new Date(estApplyDate.getTime() + 14 * 86400000);
-
-  let phase, phaseClass, phaseIcon;
-  if (posts >= ADSENSE_GOAL * 2) {
-    phase = "수익 발생 대기"; phaseClass = "phase-earning"; phaseIcon = "💰";
-  } else if (posts >= ADSENSE_GOAL + 10) {
-    phase = "승인 심사 가능"; phaseClass = "phase-approved"; phaseIcon = "✅";
-  } else if (posts >= ADSENSE_GOAL) {
-    phase = "신청 가능!"; phaseClass = "phase-apply"; phaseIcon = "📨";
-  } else if (posts >= ADSENSE_GOAL * 0.7) {
-    phase = "거의 완료"; phaseClass = "phase-review"; phaseIcon = "⏳";
-  } else {
-    phase = "콘텐츠 축적 중"; phaseClass = "phase-accumulate"; phaseIcon = "📝";
-  }
-
-  return { posts, pct, remaining, avgPerDay, estDaysToGoal, estApplyDate, estApprovalDate, phase, phaseClass, phaseIcon };
-}
-
-// ============================================
-// 데이터 Fetch
-// ============================================
-async function fetchBlogspot(blog) {
-  try {
-    const r = await fetch(`https://${blog.url}.blogspot.com/feeds/posts/default?alt=json&max-results=10`);
-    const d = await r.json();
-    const entries = d.feed.entry || [];
-    return {
-      ...blog, platform:"blogspot", blogUrl:`https://${blog.url}.blogspot.com`,
-      postCount: parseInt(d.feed.openSearch$totalResults.$t||"0"),
-      posts: entries.map(e => ({
-        title: e.title.$t,
-        url: e.link.find(l=>l.rel==="alternate")?.href||"#",
-        date: new Date(e.published.$t),
-      })),
-      status:"ok",
-    };
-  } catch(e) {
-    return { ...blog, platform:"blogspot", blogUrl:`https://${blog.url}.blogspot.com`, postCount:0, posts:[], status:"error" };
-  }
-}
-
-async function fetchTistory(blog) {
-  try {
-    const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://${blog.url}.tistory.com/rss`)}`);
-    const t = await r.text();
-    const xml = new DOMParser().parseFromString(t,"text/xml");
-    const items = xml.querySelectorAll("item");
-    const posts = [];
-    items.forEach((item,i) => {
-      if(i<10) posts.push({
-        title: item.querySelector("title")?.textContent||"",
-        url: item.querySelector("link")?.textContent||"",
-        date: new Date(item.querySelector("pubDate")?.textContent||""),
-      });
-    });
-    return { ...blog, platform:"tistory", blogUrl:`https://${blog.url}.tistory.com`, postCount:posts.length, posts, status:"ok" };
-  } catch(e) {
-    return { ...blog, platform:"tistory", blogUrl:`https://${blog.url}.tistory.com`, postCount:0, posts:[], status:"error" };
-  }
-}
-
-// ============================================
-// 렌더링
-// ============================================
-function fmtDate(d) {
-  if(isNaN(d)) return "--";
-  const diff = Date.now()-d, m=Math.floor(diff/60000), h=Math.floor(diff/3600000), dd=Math.floor(diff/86400000);
-  if(m<1) return "방금"; if(m<60) return m+"분 전"; if(h<24) return h+"시간 전"; if(dd<7) return dd+"일 전";
-  return `${d.getMonth()+1}/${d.getDate()}`;
-}
-function fmtFullDate(d) { return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`; }
-function isToday(d) { const n=new Date(); return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate(); }
-function is24h(d) { return (Date.now()-d)<86400000; }
-
-function renderCard(blog, index) {
-  const as = calcAdSenseStatus(blog);
-  const pfIcon = blog.platform==="blogspot"?"🅱️":"🅣";
-  const pfClass = blog.platform==="tistory"?" tistory":"";
-  const statusDot = blog.status==="ok"?"🟢":"🔴";
-
-  // Progress fill color
-  let fillClass = "fill-blue";
-  if(as.pct>=100) fillClass="fill-green";
-  else if(as.pct>=70) fillClass="fill-orange";
-
-  // D-day
-  let ddayHtml = "";
-  if(as.remaining > 0) {
-    ddayHtml = `
-      <div class="dday-box">
-        <div class="dday-num dday-blue">D-${as.estDaysToGoal}</div>
-        <div class="dday-label">신청 가능까지 (예상 ${fmtFullDate(as.estApplyDate)})</div>
-      </div>`;
-  } else {
-    const daysToApproval = Math.max(0, Math.ceil((as.estApprovalDate - Date.now()) / 86400000));
-    if(as.posts < ADSENSE_GOAL + 10) {
-      ddayHtml = `
-        <div class="dday-box">
-          <div class="dday-num dday-green">✅ 신청 가능!</div>
-          <div class="dday-label">지금 바로 AdSense 신청하세요</div>
-        </div>`;
-    } else {
-      ddayHtml = `
-        <div class="dday-box">
-          <div class="dday-num dday-orange">승인 대기중</div>
-          <div class="dday-label">예상 승인일: ${fmtFullDate(as.estApprovalDate)}</div>
-        </div>`;
-    }
-  }
-
-  // Posts list
-  let postsHtml = "";
-  blog.posts.slice(0,5).forEach(p => {
-    const isNew = is24h(p.date);
-    postsHtml += `
-      <div class="ac-post-item">
-        <div class="ac-post-dot ${isNew?"":"old"}"></div>
-        <a href="${p.url}" target="_blank" class="ac-post-title">${p.title}</a>
-        <span class="ac-post-date">${fmtDate(p.date)}</span>
-      </div>`;
-  });
-
-  return `
-    <div class="adsense-card" style="animation-delay:${index*0.05}s" data-platform="${blog.platform}" data-phase="${as.phase}">
-      <div class="ac-header">
-        <div class="ac-name">${pfIcon} ${blog.name} ${statusDot}</div>
-        <span class="ac-platform${pfClass}">${blog.platform}</span>
-      </div>
-      <a href="${blog.blogUrl}" target="_blank" class="ac-url">${blog.blogUrl}</a>
-
-      <span class="phase-badge ${as.phaseClass}">${as.phaseIcon} ${as.phase}</span>
-
-      <div class="ac-progress">
-        <div class="ac-progress-header">
-          <span class="ac-progress-label">AdSense 신청 기준 (${ADSENSE_GOAL}개)</span>
-          <span class="ac-progress-val">${as.posts}/${ADSENSE_GOAL} (${as.pct}%)</span>
-        </div>
-        <div class="ac-progress-track">
-          <div class="ac-progress-fill ${fillClass}" style="width:${as.pct}%"></div>
-        </div>
-      </div>
-
-      <div class="ac-stats">
-        <div class="ac-stat">
-          <span class="ac-stat-num" style="color:var(--green)">${as.posts}</span>
-          <div class="ac-stat-label">포스트</div>
-        </div>
-        <div class="ac-stat">
-          <span class="ac-stat-num" style="color:${as.remaining>0?'var(--orange)':'var(--green)'}">${as.remaining>0?as.remaining:'✓'}</span>
-          <div class="ac-stat-label">${as.remaining>0?'남은 글':'달성!'}</div>
-        </div>
-        <div class="ac-stat">
-          <span class="ac-stat-num" style="color:var(--blue)">${as.avgPerDay.toFixed(1)}</span>
-          <div class="ac-stat-label">일 평균</div>
-        </div>
-        <div class="ac-stat">
-          <span class="ac-stat-num" style="color:var(--accent2)">D-${as.estDaysToGoal||0}</span>
-          <div class="ac-stat-label">신청까지</div>
-        </div>
-      </div>
-
-      ${ddayHtml}
-
-      <div class="ac-posts-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'▲ 접기':'▼ 최근 글 보기'">
-        ▼ 최근 글 보기
-      </div>
-      <div class="ac-posts-list">${postsHtml||'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">포스트 없음</div>'}</div>
-    </div>`;
-}
-
-function renderAll() {
-  let filtered = allBlogData;
-  if(currentFilter==="blogspot") filtered=filtered.filter(b=>b.platform==="blogspot");
-  else if(currentFilter==="tistory") filtered=filtered.filter(b=>b.platform==="tistory");
-  else if(currentFilter==="ready") filtered=filtered.filter(b=>calcAdSenseStatus(b).pct>=100);
-  else if(currentFilter==="almost") filtered=filtered.filter(b=>{const p=calcAdSenseStatus(b).pct; return p>=70&&p<100;});
-  else if(currentFilter==="building") filtered=filtered.filter(b=>calcAdSenseStatus(b).pct<70);
-
-  filtered.sort((a,b) => (b.postCount||0) - (a.postCount||0));
-
-  document.getElementById("blogGrid").innerHTML = filtered.map((b,i)=>renderCard(b,i)).join("");
-
-  // Global stats
-  const total = allBlogData.length;
-  const totalPosts = allBlogData.reduce((s,b)=>s+(b.postCount||0),0);
-  const todayPosts = allBlogData.reduce((s,b)=>s+b.posts.filter(p=>isToday(p.date)).length,0);
-  const applyReady = allBlogData.filter(b=>calcAdSenseStatus(b).pct>=100).length;
-  const approved = 0; // 실제 승인 시 수동 업데이트
-
-  animNum("sTotalBlogs",total);
-  animNum("sTotalPosts",totalPosts);
-  animNum("sTodayPosts",todayPosts);
-  animNum("sApplyReady",applyReady);
-  animNum("sApproved",approved);
-
-  // Master progress (전체 평균)
-  const avgPct = allBlogData.length ? Math.round(allBlogData.reduce((s,b)=>s+calcAdSenseStatus(b).pct,0)/allBlogData.length) : 0;
-  document.getElementById("masterPct").textContent = avgPct+"%";
-  document.getElementById("masterFill").style.width = avgPct+"%";
-
-  // Steps timeline update
-  updateStepsTimeline(totalPosts, applyReady);
-
-  document.getElementById("lastUpdate").textContent = `최종: ${new Date().toLocaleTimeString("ko-KR")}`;
-}
-
-function updateStepsTimeline(totalPosts, applyReady) {
-  const steps = document.querySelectorAll(".step");
-  const avgPostsPerBlog = allBlogData.length ? Math.round(totalPosts / allBlogData.length) : 0;
-
-  // Step 1: 콘텐츠 축적
-  document.getElementById("stepSub1").textContent = `평균 ${avgPostsPerBlog}/${ADSENSE_GOAL}`;
-
-  // Determine current global step
-  let currentStep = 1;
-  if(avgPostsPerBlog >= ADSENSE_GOAL) currentStep = 3; // 신청 가능
-  else if(avgPostsPerBlog >= ADSENSE_GOAL * 0.7) currentStep = 2; // 품질 점검
-
-  if(applyReady > 0) {
-    currentStep = Math.max(currentStep, 3);
-    document.getElementById("stepSub3").textContent = `${applyReady}개 준비됨`;
-  } else {
-    const fastest = allBlogData.reduce((min, b) => {
-      const s = calcAdSenseStatus(b);
-      return s.estDaysToGoal < min ? s.estDaysToGoal : min;
-    }, 999);
-    document.getElementById("stepSub3").textContent = fastest < 999 ? `D-${fastest}` : "D-??";
-  }
-
-  steps.forEach((step, i) => {
-    step.classList.remove("done","active","locked");
-    if(i+1 < currentStep) step.classList.add("done");
-    else if(i+1 === currentStep) step.classList.add("active");
-    else step.classList.add("locked");
-  });
-
-  // Overall phase label
-  const phases = ["콘텐츠 축적 중","품질 점검 중","신청 준비 완료","심사 대기","승인 완료","수익 발생"];
-  document.getElementById("overallPhase").textContent = phases[currentStep-1] || phases[0];
-}
-
-function animNum(id,target) {
-  const el=document.getElementById(id); const cur=parseInt(el.textContent)||0;
-  if(cur===target){el.textContent=target;return;}
-  const step=Math.max(1,Math.floor(Math.abs(target-cur)/12));
-  let v=cur;
-  const t=setInterval(()=>{v+=v<target?step:-step;if((step>0&&v>=target)||(step<0&&v<=target)){v=target;clearInterval(t);}el.textContent=v;},30);
-}
-
-function showToast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
-
-// Filter
-document.querySelector(".adsense-section .filter-bar")?.addEventListener("click",e=>{
-  if(!e.target.classList.contains("filter-tab")) return;
-  document.querySelectorAll(".filter-bar .filter-tab").forEach(t=>t.classList.remove("active"));
-  e.target.classList.add("active");
-  currentFilter=e.target.dataset.filter;
-  renderAll();
-});
-
-// ============================================
-// 로드
-// ============================================
-async function loadAll(){
-  const ps=[...BLOGS.blogspot.map(fetchBlogspot),...BLOGS.tistory.map(fetchTistory)];
-  allBlogData=(await Promise.allSettled(ps)).filter(r=>r.status==="fulfilled").map(r=>r.value);
-  renderAll();
-  const o=document.getElementById("loadingOverlay");o.classList.add("hide");setTimeout(()=>o.style.display="none",500);
-}
-async function refreshAll(){
-  document.querySelector(".refresh-btn").classList.add("loading");
-  const ps=[...BLOGS.blogspot.map(fetchBlogspot),...BLOGS.tistory.map(fetchTistory)];
-  allBlogData=(await Promise.allSettled(ps)).filter(r=>r.status==="fulfilled").map(r=>r.value);
-  renderAll();
-  document.querySelector(".refresh-btn").classList.remove("loading");
-  showToast("✅ 새로고침 완료!");
-}
-
-setInterval(refreshAll, 5*60*1000);
-loadAll();
-</script>
-</body>
-</html>
+const P="https://api.allorigins.win/raw?url=";
+const BLOGS={blogspot:[
+{name:"공부법 연구소",url:"study-tips-korea",cat:"학습법",color:"#7c6af6",sd:"2026-02-28"},
+{name:"수험생 건강노트",url:"student-health-kr",cat:"건강",color:"#00b894",sd:"2026-02-28"},
+{name:"집중력 멘탈코치",url:"focus-mental-study",cat:"멘탈",color:"#e17055",sd:"2026-02-28"},
+{name:"수험생 영양식단",url:"student-nutrition-kr",cat:"영양",color:"#fdcb6e",sd:"2026-02-28"},
+{name:"시간관리 플래너",url:"time-planner-study",cat:"시간관리",color:"#0984e3",sd:"2026-02-28"},
+{name:"수능전략 가이드",url:"suneung-strategy-kr",cat:"수능전략",color:"#d63031",sd:"2026-02-28"},
+{name:"컨디션 관리법",url:"sleep-condition-study",cat:"컨디션",color:"#00cec9",sd:"2026-02-28"},
+{name:"대입정보 나침반",url:"college-admission-kr",cat:"입시",color:"#e84393",sd:"2026-02-28"},
+{name:"과목별 공부꿀팁",url:"subject-study-tips",cat:"과목별",color:"#636e72",sd:"2026-02-28"},
+{name:"Easy Food Recipe",url:"easy-food-recipe",cat:"요리",color:"#ff7675",sd:"2025-10-01"},
+{name:"Fitness Life Blog",url:"fitness-life-blog",cat:"피트니스",color:"#55efc4",sd:"2025-10-01"},
+{name:"Health Tips Daily",url:"health-tips-daily",cat:"건강팁",color:"#74b9ff",sd:"2025-10-01"},
+{name:"Home Decor Ideas",url:"home-decor-ideas",cat:"인테리어",color:"#fab1a0",sd:"2025-10-01"},
+{name:"Smart Finance Guide",url:"smart-finance-guide",cat:"재테크",color:"#ffeaa7",sd:"2025-10-01"},
+{name:"Tech Review Hub",url:"tech-review-hub",cat:"IT리뷰",color:"#81ecec",sd:"2025-10-01"},
+{name:"Travel World Blog",url:"travel-world-blog",cat:"여행",color:"#a29bfe",sd:"2025-10-01"},
+{name:"Gaming News Hub",url:"gaming-news-hub",cat:"게임",color:"#fd79a8",sd:"2025-10-01"}],
+tistory:[
+{name:"techtrendzworld",url:"techtrendzworld",cat:"IT/기술",color:"#7c6af6",sd:"2025-06-01"},
+{name:"moneytips2025",url:"moneytips2025",cat:"재테크",color:"#00b894",sd:"2025-06-01"},
+{name:"healthylife365day",url:"healthylife365day",cat:"건강",color:"#e17055",sd:"2025-06-01"},
+{name:"tastyfoodguide",url:"tastyfoodguide",cat:"요리",color:"#fdcb6e",sd:"2025-06-01"},
+{name:"traveldiaries",url:"traveldiaries",cat:"여행",color:"#0984e3",sd:"2025-06-01"},
+{name:"journal34920",url:"journal34920",cat:"일반",color:"#636e72",sd:"2025-09-01"},
+{name:"smartparents2025",url:"smartparents2025",cat:"육아",color:"#e84393",sd:"2025-09-01"},
+{name:"myhomespace2025",url:"myhomespace2025",cat:"부동산",color:"#00cec9",sd:"2025-09-01"},
+{name:"careerlife2025",url:"careerlife2025",cat:"직장",color:"#d63031",sd:"2025-09-01"},
+{name:"shoppingbest2025",url:"shoppingbest2025",cat:"쇼핑",color:"#fab1a0",sd:"2025-09-01"}]};
+const G=30;let D=[],cF="all";
+function cA(b){const p=b.pc||0,pct=Math.min(100,Math.round(p/G*100)),rem=Math.max(0,G-p),s=new Date(b.sd||Date.now()),dy=Math.max(1,Math.floor((Date.now()-s)/864e5)),av=p/dy,est=rem>0&&av>0?Math.ceil(rem/av):0,aD=new Date(Date.now()+est*864e5),apD=new Date(aD.getTime()+14*864e5);let ph,pc,pi;if(p>=G*2){ph="수익 발생 대기";pc="phase-earning";pi="💰"}else if(p>=G+10){ph="승인 심사 가능";pc="phase-approved";pi="✅"}else if(p>=G){ph="신청 가능!";pc="phase-apply";pi="📨"}else if(p>=G*.7){ph="거의 완료";pc="phase-review";pi="⏳"}else{ph="콘텐츠 축적 중";pc="phase-accumulate";pi="📝"}return{posts:p,pct,rem,av,est,aD,apD,ph,pc,pi}}
+async function fBS(b){try{const u=`https://${b.url}.blogspot.com/feeds/posts/default?alt=json&max-results=10`;const r=await fetch(P+encodeURIComponent(u));const d=await r.json();const e=d.feed.entry||[];return{...b,pl:"blogspot",bu:`https://${b.url}.blogspot.com`,pc:parseInt(d.feed.openSearch$totalResults.$t||"0"),ps:e.map(x=>({t:x.title.$t,u:(x.link.find(l=>l.rel==="alternate")||{}).href||"#",d:new Date(x.published.$t)})),ok:true}}catch(e){return{...b,pl:"blogspot",bu:`https://${b.url}.blogspot.com`,pc:0,ps:[],ok:false}}}
+async function fTS(b){try{const r=await fetch(P+encodeURIComponent(`https://${b.url}.tistory.com/rss`));const t=await r.text();const x=new DOMParser().parseFromString(t,"text/xml");const it=x.querySelectorAll("item");const ps=[];it.forEach((i,n)=>{if(n<10)ps.push({t:i.querySelector("title")?.textContent||"",u:i.querySelector("link")?.textContent||"",d:new Date(i.querySelector("pubDate")?.textContent||"")})});return{...b,pl:"tistory",bu:`https://${b.url}.tistory.com`,pc:ps.length,ps,ok:true}}catch(e){return{...b,pl:"tistory",bu:`https://${b.url}.tistory.com`,pc:0,ps:[],ok:false}}}
+function fD(d){if(isNaN(d))return"--";const df=Date.now()-d,m=Math.floor(df/6e4),h=Math.floor(df/36e5),dd=Math.floor(df/864e5);if(m<1)return"방금";if(m<60)return m+"분전";if(h<24)return h+"시간전";if(dd<7)return dd+"일전";return(d.getMonth()+1)+"/"+d.getDate()}
+function fFD(d){return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()}
+function isT(d){const n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
+function is24(d){return(Date.now()-d)<864e5}
+function rC(b,i){const a=cA(b),pI=b.pl==="blogspot"?"🅱️":"🅣",pCl=b.pl==="tistory"?" tistory":"",sD=b.ok?"🟢":"🔴";let fC="fill-blue";if(a.pct>=100)fC="fill-green";else if(a.pct>=70)fC="fill-orange";let dd="";if(a.rem>0)dd=`<div class="dday-box"><div class="dday-num dday-blue">D-${a.est}</div><div class="dday-label">신청까지 (예상 ${fFD(a.aD)})</div></div>`;else if(a.posts<G+10)dd=`<div class="dday-box"><div class="dday-num dday-green">✅ 신청 가능!</div><div class="dday-label">지금 AdSense 신청하세요</div></div>`;else dd=`<div class="dday-box"><div class="dday-num dday-orange">승인 대기</div><div class="dday-label">예상: ${fFD(a.apD)}</div></div>`;
+let pH="";b.ps.slice(0,5).forEach(p=>{pH+=`<div class="ac-post-item"><div class="ac-post-dot ${is24(p.d)?"":"old"}"></div><a href="${p.u}" target="_blank" class="ac-post-title">${p.t}</a><span class="ac-post-date">${fD(p.d)}</span></div>`});
+return`<div class="adsense-card" style="animation-delay:${i*.05}s" data-pl="${b.pl}" data-ph="${a.ph}"><div class="ac-header"><div class="ac-name">${pI} ${b.name} ${sD}</div><span class="ac-platform${pCl}">${b.pl}</span></div><a href="${b.bu}" target="_blank" class="ac-url">${b.bu}</a><span class="phase-badge ${a.pc}">${a.pi} ${a.ph}</span><div class="ac-progress"><div class="ac-progress-header"><span class="ac-progress-label">AdSense (${G}개)</span><span class="ac-progress-val">${a.posts}/${G} (${a.pct}%)</span></div><div class="ac-progress-track"><div class="ac-progress-fill ${fC}" style="width:${a.pct}%"></div></div></div><div class="ac-stats"><div class="ac-stat"><span class="ac-stat-num" style="color:var(--green)">${a.posts}</span><div class="ac-stat-label">포스트</div></div><div class="ac-stat"><span class="ac-stat-num" style="color:${a.rem>0?"var(--orange)":"var(--green)"}">${a.rem>0?a.rem:"✓"}</span><div class="ac-stat-label">${a.rem>0?"남은 글":"달성!"}</div></div><div class="ac-stat"><span class="ac-stat-num" style="color:var(--blue)">${a.av.toFixed(1)}</span><div class="ac-stat-label">일평균</div></div><div class="ac-stat"><span class="ac-stat-num" style="color:var(--accent2)">D-${a.est||0}</span><div class="ac-stat-label">신청까지</div></div></div>${dd}<div class="ac-posts-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'▲ 접기':'▼ 최근 글 보기'">▼ 최근 글 보기</div><div class="ac-posts-list">${pH||'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px">포스트 없음</div>'}</div></div>`}
+function rAll(){let f=D;if(cF==="blogspot")f=f.filter(b=>b.pl==="blogspot");else if(cF==="tistory")f=f.filter(b=>b.pl==="tistory");else if(cF==="ready")f=f.filter(b=>cA(b).pct>=100);else if(cF==="almost")f=f.filter(b=>{const p=cA(b).pct;return p>=70&&p<100});else if(cF==="building")f=f.filter(b=>cA(b).pct<70);f.sort((a,b)=>(b.pc||0)-(a.pc||0));document.getElementById("grid").innerHTML=f.map((b,i)=>rC(b,i)).join("");
+const tot=D.length,tp=D.reduce((s,b)=>s+(b.pc||0),0),td=D.reduce((s,b)=>s+b.ps.filter(p=>isT(p.d)).length,0),ar=D.filter(b=>cA(b).pct>=100).length;
+aN("sB",tot);aN("sP",tp);aN("sT",td);aN("sR",ar);aN("sA",0);
+const avg=D.length?Math.round(D.reduce((s,b)=>s+cA(b).pct,0)/D.length):0;document.getElementById("mP").textContent=avg+"%";document.getElementById("mF").style.width=avg+"%";
+const avgP=D.length?Math.round(tp/D.length):0;document.getElementById("s1").textContent=`평균 ${avgP}/${G}`;let cs=1;if(avgP>=G)cs=3;else if(avgP>=G*.7)cs=2;if(ar>0){cs=Math.max(cs,3);document.getElementById("s3").textContent=ar+"개 준비"}else{const fast=D.reduce((m,b)=>{const s=cA(b);return s.est<m?s.est:m},999);document.getElementById("s3").textContent=fast<999?"D-"+fast:"D-??"}
+document.querySelectorAll(".step").forEach((s,i)=>{s.classList.remove("done","active","locked");if(i+1<cs)s.classList.add("done");else if(i+1===cs)s.classList.add("active");else s.classList.add("locked")});
+document.getElementById("oP").textContent=["콘텐츠 축적 중","품질 점검 중","신청 준비 완료","심사 대기","승인 완료","수익 발생"][cs-1]||"";
+document.getElementById("lastUp").textContent="최종: "+new Date().toLocaleTimeString("ko-KR")}
+function aN(id,t){const e=document.getElementById(id);const c=parseInt(e.textContent)||0;if(c===t){e.textContent=t;return}const s=Math.max(1,Math.floor(Math.abs(t-c)/12));let v=c;const ti=setInterval(()=>{v+=v<t?s:-s;if((s>0&&v>=t)||(s<0&&v<=t)){v=t;clearInterval(ti)}e.textContent=v},30)}
+function sT(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
+document.querySelector(".filter-bar")?.addEventListener("click",e=>{if(!e.target.classList.contains("filter-tab"))return;document.querySelectorAll(".filter-tab").forEach(t=>t.classList.remove("active"));e.target.classList.add("active");cF=e.target.dataset.filter;rAll()});
+async function loadAll(){const ps=[...BLOGS.blogspot.map(fBS),...BLOGS.tistory.map(fTS)];D=(await Promise.allSettled(ps)).filter(r=>r.status==="fulfilled").map(r=>r.value);rAll();const o=document.getElementById("lo");o.classList.add("hide");setTimeout(()=>o.style.display="none",500)}
+async function refreshAll(){document.querySelector(".refresh-btn").classList.add("loading");const ps=[...BLOGS.blogspot.map(fBS),...BLOGS.tistory.map(fTS)];D=(await Promise.allSettled(ps)).filter(r=>r.status==="fulfilled").map(r=>r.value);rAll();document.querySelector(".refresh-btn").classList.remove("loading");sT("✅ 새로고침 완료!")}
+setInterval(refreshAll,3e5);loadAll();
+</script></body></html>
