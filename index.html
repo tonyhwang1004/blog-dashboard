@@ -10,7 +10,7 @@
 </style></head><body>
 <div class="loading-overlay" id="lo"><div class="loader"></div><div class="loading-text">블로그 데이터 수집 중...</div></div>
 <div class="toast" id="toast"></div>
-<header class="header"><div><h1>📊 Blog Dashboard + AdSense Tracker</h1><div class="header-sub">블로그스팟 17개 + 티스토리 10개 — 실시간 포스트 & 애드센스 승인 현황</div></div><div class="header-right"><span class="last-update" id="lastUp">--</span><button class="refresh-btn" onclick="refreshAll()"><span class="spin">🔄</span> 새로고침</button></div></header>
+<header class="header"><div><h1>📊 Blog Dashboard + AdSense Tracker</h1><div class="header-sub">블로그스팟 9개 + 티스토리 10개 — 실시간 포스트 & 애드센스 승인 현황</div></div><div class="header-right"><span class="last-update" id="lastUp">--</span><button class="refresh-btn" onclick="refreshAll()"><span class="spin">🔄</span> 새로고침</button></div></header>
 <div class="stats-bar"><div class="stat-card"><span class="stat-num" style="color:var(--blue)" id="sB">0</span><div class="stat-label">전체 블로그</div></div><div class="stat-card"><span class="stat-num" style="color:var(--green)" id="sP">0</span><div class="stat-label">전체 포스트</div></div><div class="stat-card"><span class="stat-num" style="color:var(--orange)" id="sT">0</span><div class="stat-label">오늘 발행</div></div><div class="stat-card"><span class="stat-num" style="color:var(--accent2)" id="sR">0</span><div class="stat-label">신청 가능</div></div><div class="stat-card"><span class="stat-num" style="color:var(--yellow)" id="sA">0</span><div class="stat-label">승인 완료</div></div></div>
 <div class="adsense-section"><div class="adsense-title">💰 AdSense 승인 로드맵 <span class="badge" id="oP">콘텐츠 축적 중</span></div>
 <div class="master-progress"><div class="master-progress-header"><div class="master-progress-title">전체 진행률</div><div class="master-progress-pct" id="mP">0%</div></div><div class="progress-track"><div class="progress-fill" id="mF" style="width:0%"></div></div>
@@ -29,14 +29,7 @@ const BLOGS={blogspot:[
 {name:"컨디션 관리법",url:"sleep-condition-study",cat:"컨디션",color:"#00cec9",sd:"2026-02-28"},
 {name:"대입정보 나침반",url:"college-admission-kr",cat:"입시",color:"#e84393",sd:"2026-02-28"},
 {name:"과목별 공부꿀팁",url:"subject-study-tips",cat:"과목별",color:"#636e72",sd:"2026-02-28"},
-{name:"Easy Food Recipe",url:"easy-food-recipe",cat:"요리",color:"#ff7675",sd:"2025-10-01"},
-{name:"Fitness Life Blog",url:"fitness-life-blog",cat:"피트니스",color:"#55efc4",sd:"2025-10-01"},
-{name:"Health Tips Daily",url:"health-tips-daily",cat:"건강팁",color:"#74b9ff",sd:"2025-10-01"},
-{name:"Home Decor Ideas",url:"home-decor-ideas",cat:"인테리어",color:"#fab1a0",sd:"2025-10-01"},
-{name:"Smart Finance Guide",url:"smart-finance-guide",cat:"재테크",color:"#ffeaa7",sd:"2025-10-01"},
-{name:"Tech Review Hub",url:"tech-review-hub",cat:"IT리뷰",color:"#81ecec",sd:"2025-10-01"},
-{name:"Travel World Blog",url:"travel-world-blog",cat:"여행",color:"#a29bfe",sd:"2025-10-01"},
-{name:"Gaming News Hub",url:"gaming-news-hub",cat:"게임",color:"#fd79a8",sd:"2025-10-01"}],
+],
 tistory:[
 {name:"techtrendzworld",url:"techtrendzworld",cat:"IT/기술",color:"#7c6af6",sd:"2025-06-01"},
 {name:"moneytips2025",url:"moneytips2025",cat:"재테크",color:"#00b894",sd:"2025-06-01"},
